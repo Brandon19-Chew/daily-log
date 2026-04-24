@@ -2,24 +2,31 @@ name: Daily Auto Commit
 
 on:
   schedule:
-    - cron: "0 1 * * *"   # runs daily (UTC)
+    - cron: "0 1 * * *"   # daily (UTC)
   workflow_dispatch:
+
+# ✅ REQUIRED permission to allow push
+permissions:
+  contents: write
 
 jobs:
   commit:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
 
       - name: Update file
         run: |
           echo "Auto update: $(date)" >> daily.txt
 
-      - name: Commit changes
+      - name: Commit and push
         run: |
-          git config user.name "github-actions"
-          git config user.email "github-actions@github.com"
-          git add .
-          git commit -m "Daily auto update" || exit 0
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add daily.txt
+          git commit -m "Daily auto update" || echo "No changes to commit"
           git push
