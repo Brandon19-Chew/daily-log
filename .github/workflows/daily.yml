@@ -1,8 +1,7 @@
 name: Daily Auto Commit
-
 on:
   schedule:
-    - cron: "0 1 * * *"
+    - cron: "0 17 * * *"  # 1:00 AM UTC+8 (Malaysia Time)
   workflow_dispatch:
 
 permissions:
@@ -11,21 +10,20 @@ permissions:
 jobs:
   commit:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          ref: main  # ⬅️ explicit branch
-          
+          ref: main
+
       - name: Update file
         run: |
           echo "Auto update: $(date +'%Y-%m-%d %H:%M:%S')" >> daily.txt
-          
+
       - name: Commit and push
         run: |
           git config user.name "github-actions[bot]"
-          git config user.email "Brandon19-Chew@users.noreply.github.com"  # ← your specific email
+          git config user.email "Brandon19-Chew@users.noreply.github.com"
           git add daily.txt
           git commit -m "Daily auto update" || echo "No changes to commit"
-          git push origin main  # ⬅️ explicit push
+          git push origin main
